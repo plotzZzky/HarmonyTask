@@ -8,7 +8,7 @@ import ModalProfile from "@elements/modalProfile";
 export default function Find() {
   const [getToken, setToken] = useState(typeof window !== 'undefined' ? sessionStorage.getItem('token') : null);
   const [getCards, setCards] = useState([]);
-  const [getModalData, setModalData] = useState([])
+  const [getModalData, setModalData] = useState([]);
 
   const router = useRouter();
 
@@ -21,7 +21,7 @@ export default function Find() {
   // Busca as informações dos cards no back
   function getAllCarts() {
     checkLogin()
-    const url = "http://127.0.0.1:8000/profiles/all/";
+    const url = "http://127.0.0.1:8000/profiles/";
 
     const data = {
       method: 'GET',
@@ -31,7 +31,7 @@ export default function Find() {
     fetch(url, data)
       .then((res) => res.json())
       .then((data) => {
-        createCards(data['profiles']);
+        createCards(data);
       });
   }
 
@@ -39,8 +39,9 @@ export default function Find() {
     if (value) {
       setCards(
         value.map((data, index) => (
-          <Card key={index} name={data.name} lastname={data.lastname} id={data.id} 
-            profession={data.profession} picture={data.picture} setModalData={setModalData}>
+          <Card key={index} name={data.name} lastname={data.lastname} id={data.id} area={data.area}
+            profession={data.profession} picture={data.picture} favorite={data.favorite} 
+            setModalData={setModalData} update={getAllCarts}>
           </Card>
         ))
       );
@@ -60,7 +61,7 @@ export default function Find() {
       </div>
 
     <ModalView data={getModalData}></ModalView>
-    <ModalProfile></ModalProfile>
+    <ModalProfile update={getAllCarts}></ModalProfile>
     </>
   )
 }

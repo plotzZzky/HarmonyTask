@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { faUtensils, faWrench, faScaleBalanced, faCross, faLaptop, faUser, faRoad } from "@fortawesome/free-solid-svg-icons"
+import { faUtensils, faWrench, faScaleBalanced, faCross, faLaptop, faUser } from "@fortawesome/free-solid-svg-icons"
 
 export default function ModalProfile(props) {
   const [getToken, setToken] = useState(typeof window !== 'undefined' ? sessionStorage.getItem('token') : null);
@@ -13,8 +13,8 @@ export default function ModalProfile(props) {
   const [getProfession, setProfission] = useState("");
   const [getActive, setActive] = useState(true);
 
-  const [getImageUser, setImageUser] = useState();
-  const [getFileUser, setFileUser] = useState("user.png");
+  const [getImageUser, setImageUser] = useState("");
+  const [getFileUser, setFileUser] = useState("");
 
   const areas = [
     {"name": "Alimentos", "icon": <FontAwesomeIcon icon={faUtensils}/>},
@@ -48,13 +48,11 @@ export default function ModalProfile(props) {
 
   // Recebe os dados do perfil profissional do back
   function receiveModalData() {
-    const url = 'http://127.0.0.1:8000/profiles/';
-    const form = new FormData();
+    const url = 'http://127.0.0.1:8000/profiles/your/';
   
     let data = {
-      method: 'POST',
+      method: 'GET',
       headers: { Authorization: 'Token ' + getToken },
-      body: form,
     };
   
     fetch(url, data)
@@ -66,7 +64,7 @@ export default function ModalProfile(props) {
         }
       })
       .then((data) => {
-        fillOutForm(data['profile']);
+        fillOutForm(data);
       })
       .catch((error) => {
         console.error(error.message);
@@ -79,6 +77,7 @@ export default function ModalProfile(props) {
       setName(data.name)
       setLastName(data.lastname)
       setTelephone(data.telephone)
+      setArea(data.area)
       setProfission(data.profession)
       setDesc(data.description)
       setFileUser(`http://127.0.0.1:8000/${data.picture}/`)
@@ -86,10 +85,19 @@ export default function ModalProfile(props) {
     }
   }
 
+  function validateForm() {
+    if (getImageUser, getFileUser, getName, getLastName, getTelephone, getArea, getProfession, getDesc) {
+      createProfile
+    } else {
+      alert("Preencha o formulario corretamente!")
+    }
+  }
+
+
   function createProfile() {
-    const url = 'http://127.0.0.1:8000/profiles/update/';
+    const url = 'http://127.0.0.1:8000/profiles/your/';
     const form = new FormData();
-  
+
     form.append("name", getName);
     form.append("lastName", getLastName);
     form.append("telephone", getTelephone);
@@ -97,14 +105,13 @@ export default function ModalProfile(props) {
     form.append("area", getArea);
     form.append("profession", getProfession);
     form.append("active", getActive)
-    if (getImageUser) {
-      form.append('image', getImageUser, getImageUser.name);
-    }
+    form.append('image', getImageUser, getImageUser.name);
   
     const formData = {
       method: 'POST',
       headers: {
         Authorization: 'Token ' + getToken,
+        'Content-Type': 'multipart/form-data'
       },
       body: form,
     };
@@ -112,11 +119,14 @@ export default function ModalProfile(props) {
     fetch(url, formData)
       .then((res) => res.json())
       .then((data) => {
-        fillOutForm(data['profile']);
+        fillOutForm(data);
       })
       .catch((error) => {
         console.error('Erro ao enviar formulário:', error);
       });
+
+    props.update()
+    closeModal();
   }
 
   function updateName(event) {
@@ -162,10 +172,9 @@ export default function ModalProfile(props) {
     <div className="modal-background" id="modalProfile" onClick={closeModal}>
       <div className="modal" onClick={e => e.stopPropagation()}>
         <h2> Seu perfil profissional </h2>
-
         <div className="align-inputs">
-          <div>
-            <img className='preview-user-img' onClick={clickInput} src={getFileUser}></img>
+          <div className="align-imgs">
+            <img className='preview-img' onClick={clickInput} src={getFileUser}></img>
             <input type="file" className="select-image" id='selectImgUser' onChange={changeImage}></input>
           </div>
 
@@ -173,7 +182,7 @@ export default function ModalProfile(props) {
           <input type="text" className="text-input" placeholder="Seu Sobrenome" value={getLastName} onChange={updateLastName}/>
           <input type="text" className="text-input" placeholder="Seu Telefone para contato" value={getTelephone} onChange={updateTelephone}/>
 
-          <select id="selectArea" onChange={updateArea}>
+          <select id="selectArea" value={getArea} onChange={updateArea}>
             {areas.map((data) => (
               <option> {data.name} </option>
             ))}
@@ -187,7 +196,7 @@ export default function ModalProfile(props) {
             <option value={false}> Perfile Inativo </option>
           </select>
 
-          <button className="modal-btn" onClick={createProfile}> Salvar </button>
+          <button className="modal-btn" onClick={validateForm}> Salvar </button>
         </div>
       </div>
     </div>

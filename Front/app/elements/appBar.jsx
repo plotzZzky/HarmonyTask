@@ -24,7 +24,7 @@ export default function AppBar() {
     const cards = document.querySelectorAll(".card-margin");
 
     cards.forEach(item => {
-      const profession = item.querySelector(".card-profession").innerHTML.toLowerCase()
+      const profession = item.querySelector(".card-area").innerHTML.toLowerCase()
       item.style.display = profession.includes(value)? 'block' : 'none'
     });
   }
@@ -33,15 +33,24 @@ export default function AppBar() {
     const cards = document.querySelectorAll('.card-margin');
 
     cards.forEach(item => {
-      const profession = item.querySelector(".card-profession").innerHTML.toLowerCase()
-      item.style.display = profession === value? 'block' : 'none'
+      const area = item.querySelector(".card-area").innerHTML.toLowerCase()
+      item.style.display = area === value.toLowerCase() ? 'block' : 'none'
     });
   }
 
-  function ShowAllCards() {
+  function showAllCards() {
     const cards = document.querySelectorAll('.card-margin');
-    cards.forEach(element => {
-      element.style.display = 'block'
+    cards.forEach(item => {
+      item.style.display = 'block'
+    });
+  }
+
+  function showFavorites() {
+    const cards = document.querySelectorAll('.card-margin');
+    cards.forEach(item => {
+      const fav = item.querySelector(".is-fav");
+      
+      item.style.display = fav? 'block' : 'none'  
     });
   }
 
@@ -50,9 +59,9 @@ export default function AppBar() {
       <div className="app-bar-align">
         <input type="text" className="app-filter" onChange={filterCards} placeholder="Buscar por area"></input>
         <div className="align-categories">
-          <span className="categories" onClick={ShowAllCards}> <FontAwesomeIcon icon={faStar}/> Favoritos </span>
+          <span className="categories" onClick={showFavorites}> <FontAwesomeIcon icon={faStar}/> Favoritos </span>
           {categories()}
-          <span className="categories" onClick={ShowAllCards}> <FontAwesomeIcon icon={faBars}/> Todos </span>
+          <span className="categories" onClick={showAllCards}> <FontAwesomeIcon icon={faBars}/> Todos </span>
         </div>
       </div>
     </nav>

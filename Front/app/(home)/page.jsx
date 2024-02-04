@@ -72,7 +72,7 @@ export default function Home() {
         <h2 className='subtitle'> Conectando profissionais em uma rede harmoniosa de oportunidades. </h2>
 
         <div className='home-align-btns'>
-          <button onClick={goToLogin}> Começar! </button>
+          <button onClick={goToLogin}> Procurar tarefas ou profissionais </button>
         </div>
       </div>
 

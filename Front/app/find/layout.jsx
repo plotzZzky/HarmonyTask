@@ -19,8 +19,10 @@ export default function RootLayout({ children }) {
         <AppBar></AppBar>
       </header>
 
-      {children}
-
+      <main>
+        {children}
+      </main>
+      
       <Footer></Footer>
     </section>
   )

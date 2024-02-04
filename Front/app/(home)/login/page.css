@@ -103,7 +103,3 @@
   padding: 1vh 2vw;
   font-size: clamp(1em, 2vw, 1.1em);
 }
-
-.btn-login::before {
-  padding: 1vh 2vw;
-}
