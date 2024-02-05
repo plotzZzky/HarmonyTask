@@ -3,6 +3,20 @@ from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient
 import json
+import os
+
+
+# Esta função apaga todas as imagens geradas pelo test na pasta profiles/
+# NÂO RENOMEAR essa função, o nome é o padrão definido pelo unittest
+def tearDownModule():
+    path = 'profiles/'
+    if os.path.isdir(path):
+        files = os.listdir(path)
+
+        for file in files:
+            path_file = os.path.join(path, file)
+            if os.path.isfile(path_file):
+                os.unlink(path_file)
 
 
 class LoginTest(TestCase):

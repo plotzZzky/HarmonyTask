@@ -1,6 +1,8 @@
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
+from rest_framework.generics import GenericAPIView
 from rest_framework.permissions import IsAuthenticated
+from rest_framework import status
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from django.contrib.auth.hashers import check_password
@@ -12,7 +14,7 @@ from .validate import validate_user, validate_password
 from .token import create_new_token
 from .models import Recovery
 from .serializer import SerializerRecovery, SerializerUser
-from .update import update_user, update_profile
+from .update import update_profile
 
 from profiles.serializers import SerializeProfile
 
@@ -74,39 +76,38 @@ def register_user(request):
         return Response({"error": f"{field} já existe e não pode ser cadastrado!"}, status=500)
 
 
-@api_view(['POST'])
-def login_user(request):
-    """
-        Função de login do usuario.
-        
-        Steps:
-            - Recebe os valores via form
-            - Tenta a autenticação
-                - Passes:
-                    - Retorna um JSON com a resposta de sucesso e o token
-                - Fails:
-                    - Retorna um Json com a resposta de erro
-        Parameters:
-            - password (str): Senha do usuario
-            - username (str): Nome do usuario
+class LoginView(GenericAPIView):
+    def post(self, request, *args, **kwargs):
+        """
+            Função de login do usuario.
 
-        Return:
-            Se a autenticação der certo retorna um json com o token, do contário, retorna uma mensagem de erro
+            Steps:
+                - Recebe os valores via form
+                - Tenta a autenticação
+                    - Passes:
+                        - Retorna um JSON com a resposta de sucesso e o token
+                    - Fails:
+                        - Retorna um Json com a resposta de erro
+            Parameters:
+                - password (str): Senha do usuario
+                - username (str): Nome do usuario
 
-    """
-    try:
-        password = request.data['password']
-        username = request.data['username']
+            Return:
+                Se a autenticação der certo retorna um json com o token, do contário, retorna uma mensagem de erro
 
-        user = authenticate(username=username, password=password)
+        """
+        try:
+            password = request.data['password']
+            username = request.data['username']
 
-        if user is not None:
-            token = create_new_token(user)  # Função que cria um novo token a cada login
-            return Response({"token": token.key}, status=200)
-        else:
-            return Response({"error": "Usuario ou senha incorretos!"}, status=401)
-    except (KeyError, ValueError):
-        return Response({"error": "Não foi possivel fazer login!"}, status=500)
+            user = authenticate(username=username, password=password)
+            if user:
+                token = create_new_token(user)
+                return Response({"token": token.key}, status=status.HTTP_200_OK)
+            else:
+                return Response({"error": "Login incorreto!"}, status=status.HTTP_401_UNAUTHORIZED)
+        except (KeyError, ValueError):
+            return Response({"error": "Login incorreto"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(["GET"])
@@ -125,45 +126,6 @@ def get_user_data(request):
     data = {**user_data, **recovery_data, **profile_data}
 
     return Response({"user": data}, status=200)
-
-
-# Atualiza as informações do usario
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])
-def update_user(request):
-    """
-        Função que para atualizar o usario
-        
-        Steps:
-            - Recebe os valores
-            - Verifica se cada um dos valores é valido
-            - Atualiza os valores
-
-        Parameters:
-            - password (str): Senha do usario
-            - pwd (str): Confiramção da senha
-            - username (str): Nome do usuario
-            - email (email): E-mail do usuario
-            - question (str): Pergunta usada para recuperação de senha
-            - answer (str): Resposta usada para recuperação da senha
-
-        Return:
-            Retorna uma mensagem informando o status da atualização
-    """
-    try:
-        user = request.user
-        username = request.data.get('username', None)
-        email = request.data.get('email', None)
-        password = request.data.get('password', None)
-        pwd = request.data.get('pwd', None)
-        question = request.data.get('question', None)
-        answer = request.data.get('answer', None)
-
-        update_user(user, username, email, password, pwd, question, answer)
-        return Response({"msg": "Dados atualizados!"}, status=200)
-
-    except (KeyError, ValueError, ObjectDoesNotExist):
-        return Response({"msg": "Não foi possivel atualizar!"}, status=500)
 
 
 @api_view(["POST"])
@@ -247,27 +209,27 @@ def recovery_password(request):
             raise ValueError()
     except (KeyError, ValueError, ObjectDoesNotExist):
         return Response({"msg": "Resposta incorreta!"}, status=500)
-
+    
 
 # Envia a question do usuario para o front para fazer a recuperação de senha
-@api_view(['POST'])
-def receive_your_question(request):
-    """
-        Função que retorna a pergunta de recuperação de senha para o front, usada para a tela de recuperação de senha 
-        do usuario
-        
-        Steps:
-            - Recebe os valores
-            - Procura o usuario
-                - Passes:
-                    - Retorna um JSON uma mensagem de sucesso
-                - Fails:
-                    - Retorna uma mensagem de erro
-    """
-    try:
-        username = request.data['username']
-        user = User.objects.get(username=username)
-        question = user.profile.question
-        return Response({"question": question}, status=200)
-    except (KeyError, ValueError, ObjectDoesNotExist):
-        return Response({"msg": "Usuario não encontrado"}, status=500)
+class ReceiverYourQuestion(GenericAPIView):
+    def post(self, request, *args, **kwargs):
+        """
+            Função que retorna a pergunta de recuperação de senha para o front, usada para a tela de recuperação de senha
+            do usuario
+
+            Steps:
+                - Recebe os valores
+                - Procura o usuario
+                    - Passes:
+                        - Retorna um JSON uma mensagem de sucesso
+                    - Fails:
+                        - Retorna uma mensagem de erro
+        """
+        try:
+            username = request.data['username']
+            user = User.objects.get(username=username)
+            question = user.profile.question
+            return Response({"question": question}, status=status.HTTP_200_OK)
+        except (KeyError, ValueError, ObjectDoesNotExist):
+            return Response({"error": "Usuario não encontrado"}, status=status.HTTP_400_BAD_REQUEST)
