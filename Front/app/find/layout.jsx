@@ -1,7 +1,7 @@
 import { Inter } from 'next/font/google'
-import NavBar from '@elements/navbar'
-import Footer from '@elements/footer'
-import AppBar from '@elements/appBar'
+import NavBar from '@comps/navbar'
+import Footer from '@comps/footer'
+import AppBar from '@comps/appBar'
 import './page.css'
 
 

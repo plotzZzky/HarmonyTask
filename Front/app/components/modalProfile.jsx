@@ -13,8 +13,8 @@ export default function ModalProfile(props) {
   const [getProfession, setProfission] = useState("");
   const [getActive, setActive] = useState(true);
 
-  const [getImageUser, setImageUser] = useState("");
-  const [getFileUser, setFileUser] = useState("");
+  const [getImageUser, setImageUser] = useState();
+  const [getFileUser, setFileUser] = useState();
 
   const areas = [
     {"name": "Alimentos", "icon": <FontAwesomeIcon icon={faUtensils}/>},
@@ -87,17 +87,17 @@ export default function ModalProfile(props) {
 
   function validateForm() {
     if (getImageUser, getFileUser, getName, getLastName, getTelephone, getArea, getProfession, getDesc) {
-      createProfile
+      createProfile()
     } else {
       alert("Preencha o formulario corretamente!")
     }
   }
 
-
   function createProfile() {
     const url = 'http://127.0.0.1:8000/profiles/your/';
     const form = new FormData();
 
+    form.set('enctype', 'multipart/form-data');
     form.append("name", getName);
     form.append("lastName", getLastName);
     form.append("telephone", getTelephone);
@@ -105,13 +105,16 @@ export default function ModalProfile(props) {
     form.append("area", getArea);
     form.append("profession", getProfession);
     form.append("active", getActive)
-    form.append('image', getImageUser, getImageUser.name);
+    if (getImageUser) {
+      form.append('image', getImageUser, getImageUser.name);
+    }
+
+    console.log(form)
   
     const formData = {
       method: 'POST',
       headers: {
         Authorization: 'Token ' + getToken,
-        'Content-Type': 'multipart/form-data'
       },
       body: form,
     };

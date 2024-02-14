@@ -1,9 +1,9 @@
 'use client'
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import InputPwd from '@elements/inputs/inputPwd';
-import InputUser from '@elements/inputs/inputUser';
-import InputAnswer from '@elements/inputs/inputAnswer';
+import InputPwd from '@comps/inputs/inputPwd';
+import InputUser from '@comps/inputs/inputUser';
+import InputAnswer from '@comps/inputs/inputAnswer';
 
 
 export default function Login() {
@@ -34,7 +34,7 @@ export default function Login() {
     clearTimeout(timerId);
     timerId = setTimeout(() => {
       receiveQuestion(value);
-    }, 500);
+    }, 1000);
   }
 
   // Função que busca a question do usuario para recuperar a senha
@@ -93,6 +93,7 @@ export default function Login() {
             <p className='login-title'> Recuperar senha </p>
 
             <div className='align-input'>
+              <h3 style={{visibility: getVisibility? 'visible' : 'hidden'}}> Sua frase de recuperação: </h3>
               <p> {question} </p>
               <InputUser username={setUsername} valid={UserValid} setValid={setUserValid} tip='recoveryTip' action={receiveQuestionTimer}></InputUser>
               <div style={{visibility: getVisibility? 'visible' : 'hidden'}}>

@@ -1,9 +1,9 @@
 'use client'
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import Card from "@elements/card";
-import ModalView from "@elements/modalView";
-import ModalProfile from "@elements/modalProfile";
+import Card from "@comps/card";
+import ModalView from "@comps/modalView";
+import ModalProfile from "@comps/modalProfile";
 
 export default function Find() {
   const [getToken, setToken] = useState(typeof window !== 'undefined' ? sessionStorage.getItem('token') : null);
@@ -19,7 +19,7 @@ export default function Find() {
   }
 
   // Busca as informações dos cards no back
-  function getAllCarts() {
+  function getAllCards() {
     checkLogin()
     const url = "http://127.0.0.1:8000/profiles/";
 
@@ -41,7 +41,7 @@ export default function Find() {
         value.map((data, index) => (
           <Card key={index} name={data.name} lastname={data.lastname} id={data.id} area={data.area}
             profession={data.profession} picture={data.picture} favorite={data.favorite} 
-            setModalData={setModalData} update={getAllCarts}>
+            setModalData={setModalData} update={getAllCards}>
           </Card>
         ))
       );
@@ -49,7 +49,7 @@ export default function Find() {
   }
 
   useEffect(() => {
-    getAllCarts()
+    getAllCards()
   }, [])
 
   return (
@@ -61,7 +61,7 @@ export default function Find() {
       </div>
 
     <ModalView data={getModalData}></ModalView>
-    <ModalProfile update={getAllCarts}></ModalProfile>
+    <ModalProfile update={getAllCards}></ModalProfile>
     </>
   )
 }

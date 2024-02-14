@@ -1,11 +1,11 @@
 'use client'
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import InputPwd from '@elements/inputs/inputPwd';
-import InputEmail from '@elements/inputs/inputEmail';
-import InputUser from '@elements/inputs/inputUser';
-import InputAnswer from '@elements/inputs/inputAnswer';
-import InputQuestion from '@elements/inputs/inputQuestion';
+import InputPwd from '@comps/inputs/inputPwd';
+import InputEmail from '@comps/inputs/inputEmail';
+import InputUser from '@comps/inputs/inputUser';
+import InputAnswer from '@comps/inputs/inputAnswer';
+import InputQuestion from '@comps/inputs/inputQuestion';
 
 
 export default function Login() {

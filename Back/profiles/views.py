@@ -2,6 +2,7 @@ from rest_framework.response import Response
 from rest_framework.generics import GenericAPIView, get_object_or_404
 from rest_framework import mixins, status
 from django.core.exceptions import ObjectDoesNotExist
+import os
 
 from .models import Profile, Favorite
 from .serializers import SerializeSimpleProfile, SerializeProfile
@@ -31,7 +32,7 @@ class ProfilesClassView(GenericAPIView):
             return Response({"error": "Perfil não encontrado"}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class YourProfileClassView(mixins.RetrieveModelMixin, GenericAPIView):
+class YourProfileClassView(mixins.RetrieveModelMixin, mixins.CreateModelMixin, GenericAPIView):
     IsAuthenticated = True
 
     def get(self, request):
@@ -44,6 +45,7 @@ class YourProfileClassView(mixins.RetrieveModelMixin, GenericAPIView):
             Função que retorna o perfil detalhado de um usuario especifico
         """
         try:
+
             user = request.user
             picture = request.data.get('image', None)
             name = request.data['name']
@@ -56,8 +58,8 @@ class YourProfileClassView(mixins.RetrieveModelMixin, GenericAPIView):
             active = request.data['active']
 
             # Tenta obter o perfil existente ou cria um novo se não existir
-            profile = Profile.objects.get(user=user)
-            if profile:
+            profile, created = Profile.objects.get_or_create(user=user)
+            if not created:
                 # Se o perfil já existir, atualiza os dados
                 profile.name = name
                 profile.lastname = lastname
@@ -66,13 +68,14 @@ class YourProfileClassView(mixins.RetrieveModelMixin, GenericAPIView):
                 profile.email = email
                 profile.telephone = telephone
                 profile.description = description
-                profile.active = active
+                profile.active = bool(active)
                 if picture:
+                    os.remove(f"media/{profile.picture}")
                     profile.picture = picture
             else:
-                profile = Profile.objects.get_or_create(
+                profile = Profile.objects.create(
                     user=user, name=name, lastname=lastname, area=area, profession=profession, email=email,
-                    telephone=telephone, description=description, picture=picture
+                    telephone=telephone, description=description, picture=picture, active=True
                 )
             profile.save()
             return Response({"msg": "Perfil criado"}, status=200)

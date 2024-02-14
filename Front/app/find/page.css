@@ -57,19 +57,18 @@
 /* Cards */
 .align-cards {
   display: flex;
-  margin: 6vh 1vw 0;
+  margin: 5vh 1vw 1vh;
 }
 
 .card-margin {
   flex: 0 1 12.5%;
-  aspect-ratio: 1/1.3;
 }
 
 .card {
   position: relative;
   display: flex;
   flex-direction: column;
-  height: 100%;
+  margin: 1vh 0.5vw;
   cursor: pointer;
   background-color: snow;
   box-shadow: var(--shadow);
@@ -78,7 +77,7 @@
 .card-pic {
   width: 100%;
   height: 100%;
-  object-fit: fill;
+  object-fit: contain;
 }
 
 .card-title {
