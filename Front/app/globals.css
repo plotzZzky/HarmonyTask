@@ -198,17 +198,24 @@ footer * {
 .brand {
   display: flex;
   flex-direction: column;
-  font-size: clamp(0.8em, 2vw, 1em);
   font-weight: bold;
 }
 
+.brand-title {
+  font-size: clamp(1.4em, 2vw, 1.8em);
+}
+
 .brand-name {
-  font-size: clamp(1.2em, 5vw, 2em);
+  font-size: clamp(0.8em, 1vw, 1em);
 }
 
 @media screen and (max-width: 900px) {
   .page-home {
     padding: 22vh 2vw 1vh;
     min-height: 77vh;
+  }
+
+  footer {
+    flex-direction: column;
   }
 }

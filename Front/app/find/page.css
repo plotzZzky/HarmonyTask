@@ -57,11 +57,12 @@
 /* Cards */
 .align-cards {
   display: flex;
+  flex-wrap: wrap;
   margin: 5vh 1vw 1vh;
 }
 
 .card-margin {
-  flex: 0 1 12.5%;
+  flex: 0 1 20%;
 }
 
 .card {
@@ -76,8 +77,8 @@
 
 .card-pic {
   width: 100%;
-  height: 100%;
-  object-fit: contain;
+  height: 30vh;
+  object-fit: fill;
 }
 
 .card-title {
@@ -220,7 +221,7 @@ textarea {
   }
 
   .card-margin {
-    flex: 0 1 16.6%;
+    flex: 0 1 25%;
   }
 }
 
@@ -230,11 +231,16 @@ textarea {
   }
 
   .card-margin {
-    flex: 0 1 25%;
+    flex: 0 1 33.33%;
   }
 }
 
 @media screen and (max-width: 550px) {
+
+  .card-margin {
+    flex: 0 0 50%;
+  }
+
   .categories {
     font-size: 0;
   }
@@ -242,4 +248,5 @@ textarea {
   .align-cards {
     margin-top: 10vh;
   }
+
 }

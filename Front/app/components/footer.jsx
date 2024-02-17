@@ -10,8 +10,8 @@ export default function Footer() {
   return (
     <footer>
       <div className='brand'>
-        <span className='brand-name'>HarmonyTask Network</span>
-        <span> Conectando profissionais em uma rede harmoniosa de oportunidades. </span>
+        <span className='brand-title'>HarmonyTask Network</span>
+        <span className='brand-name'> Conectando profissionais em uma rede harmoniosa de oportunidades. </span>
       </div>
 
 
