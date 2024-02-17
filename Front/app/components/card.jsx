@@ -4,7 +4,6 @@ import { useState } from "react";
 
 export default function Card(props) {
   const [getToken, setToken] = useState(typeof window !== 'undefined' ? sessionStorage.getItem('token') : null);
-  const image = `http://127.0.0.1:8000${props.picture}`
 
   function showModal() {
     const modal = document.getElementById('modalView')
@@ -12,7 +11,7 @@ export default function Card(props) {
   }
 
   function receiveModalData() {
-    const url = 'http://127.0.0.1:8000/profiles/'
+    const url = 'http://127.0.0.1:8000/profiles/all/'
     const form = new FormData()
     form.append('profileId', props.id)
 
@@ -34,7 +33,7 @@ export default function Card(props) {
 
   function changeFavorite(event) {
     event.stopPropagation()
-    const url = 'http://127.0.0.1:8000/profiles/favorite/'
+    const url = 'http://127.0.0.1:8000/profiles/favorites/'
     const form = new FormData()
     form.append('profileId', props.id)
 
@@ -63,7 +62,7 @@ export default function Card(props) {
     <div className="card-margin">
       <div className="card" onClick={receiveModalData}>
         {FAVORITE()}
-        <img src={image} alt="" className="card-pic" />
+        <img src={props.picture} alt="" className="card-pic" />
         <span className="card-title">{props.profession}</span>
         <span className="card-name">{props.name} {props.lastname}</span>
         <span className="card-area">{props.area}</span>

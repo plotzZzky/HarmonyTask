@@ -1,5 +1,5 @@
 from rest_framework.response import Response
-from rest_framework.generics import GenericAPIView
+from rest_framework.viewsets import ModelViewSet
 from rest_framework import status
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
@@ -11,10 +11,14 @@ from django.db.utils import IntegrityError
 from .validate import validate_user, validate_password
 from .token import create_new_token
 from .models import Recovery
+from .serializer import SerializerUser, SerializerRecovery
 
 
-class RegisterView(GenericAPIView):
-    def post(self, request):
+class RegisterView(ModelViewSet):
+    serializer_class = SerializerUser
+    queryset = []
+
+    def create(self, request, *args, **kwargs):
         try:
             password = request.data['password']
             pwd = request.data['pwd']
@@ -45,8 +49,14 @@ class RegisterView(GenericAPIView):
             return Response({"msg": msg}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class LoginView(GenericAPIView):
-    def post(self, request, *args, **kwargs):
+class LoginView(ModelViewSet):
+    """
+        View de login
+    """
+    serializer_class = SerializerUser
+    queryset = []
+
+    def create(self, request, *args, **kwargs):
         try:
             password = request.data['password']
             username = request.data['username']
@@ -61,10 +71,12 @@ class LoginView(GenericAPIView):
             return Response({"error": "Login incorreto"}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class RecoveryPassword(GenericAPIView):
+class RecoveryPassword(ModelViewSet):
+    queryset = []
+    serializer_class = SerializerRecovery
     IsAuthenticated = True
 
-    def post(self, request):
+    def create(self, request, *args, **kwargs):
         try:
             username = request.data['username']
             answer = request.data['answer']
@@ -78,16 +90,19 @@ class RecoveryPassword(GenericAPIView):
                     return Response({"msg": "Senha atualizada!"}, status=200)
                 else:
                     msg = "As senhas precisam ser iguais, no minimo uma letra, numero e 8 digitos!"
-                    return Response({"msg": msg}, status=500)
+                    return Response({"erro": msg}, status=500)
             else:
                 raise ValueError()
         except (KeyError, ValueError, ObjectDoesNotExist):
-            return Response({"msg": "Resposta incorreta!"}, status=500)
+            return Response({"error": "Resposta incorreta!"}, status=500)
 
 
 # Envia a question do usuario para o front para fazer a recuperação de senha
-class ReceiverYourQuestion(GenericAPIView):
-    def post(self, request, *args, **kwargs):
+class ReceiverYourQuestion(ModelViewSet):
+    serializer_class = SerializerUser
+    queryset = []
+
+    def create(self, request, *args, **kwargs):
         try:
             username = request.data['username']
             user = User.objects.get(username=username)

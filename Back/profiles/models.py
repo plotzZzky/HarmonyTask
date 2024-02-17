@@ -26,7 +26,7 @@ class Profile(models.Model):
 
 
 class Favorite(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     professional = models.OneToOneField(Profile, on_delete=models.CASCADE)
 
     objects = models.Manager()

@@ -73,12 +73,12 @@ export default function Login() {
     fetch(url, info)
       .then((res) => res.json())
       .then((data) => {
-        if (data.msg) {
-          const tip = document.getElementById("LoginTip")
-          tip.innerText = data.msg
-        } else {
+        if (data.token) {
           sessionStorage.setItem("token", data.token)
           router.push('/find')
+        } else {
+          const tip = document.getElementById("LoginTip")
+          tip.innerText = data.error
         }
       })
   }
@@ -110,28 +110,16 @@ export default function Login() {
     }
 
     fetch(url, requestData)
-      .then((res) => {
-        if (res.status === 200) {
-          return res.json();
-        } else {
-          const data = res.json();
-          throw new Error(`${data.msg} status: ${res.status}`);
-        }
-      })
-
+      .then((res) =>  res.json())
       .then((data) => {
-        if (data.error) {
-          const tip = document.getElementById("SignTip")
-          tip.innerText = data.msg
-        } else {
+        if (data.token) {
           sessionStorage.setItem("token", data.token)
           router.push('/find')
+        } else {
+          const tip = document.getElementById("SignTip")
+          tip.innerText = data.msg
         }
       })
-
-      .catch((error) => {
-        alert(error.message)
-      });
   }
 
   return (

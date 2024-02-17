@@ -80,7 +80,7 @@ export default function ModalProfile(props) {
       setArea(data.area)
       setProfission(data.profession)
       setDesc(data.description)
-      setFileUser(`http://127.0.0.1:8000/${data.picture}/`)
+      setFileUser(data.picture)
       setActive(data.active)
     }
   }
@@ -109,8 +109,6 @@ export default function ModalProfile(props) {
       form.append('image', getImageUser, getImageUser.name);
     }
 
-    console.log(form)
-  
     const formData = {
       method: 'POST',
       headers: {
@@ -186,8 +184,8 @@ export default function ModalProfile(props) {
           <input type="text" className="text-input" placeholder="Seu Telefone para contato" value={getTelephone} onChange={updateTelephone}/>
 
           <select id="selectArea" value={getArea} onChange={updateArea}>
-            {areas.map((data) => (
-              <option> {data.name} </option>
+            {areas.map((data, index) => (
+              <option key={index}> {data.name} </option>
             ))}
           </select>
 

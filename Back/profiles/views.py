@@ -1,6 +1,7 @@
 from rest_framework.response import Response
-from rest_framework.generics import GenericAPIView, get_object_or_404
-from rest_framework import mixins, status
+from rest_framework.viewsets import ModelViewSet
+from rest_framework.generics import get_object_or_404
+from rest_framework import status
 from django.core.exceptions import ObjectDoesNotExist
 import os
 
@@ -8,18 +9,20 @@ from .models import Profile, Favorite
 from .serializers import SerializeSimpleProfile, SerializeProfile
 
 
-class ProfilesClassView(GenericAPIView):
+class ProfilesClassView(ModelViewSet):
     IsAuthenticated = True
+    serializer_class = SerializeSimpleProfile
+    queryset = Profile.objects.filter(active=True)
 
-    def get(self, request):
+    def list(self, request, *args):
         """
             Função que busca a lista com o perfil de todos os profissionais
         """
-        query = Profile.objects.filter(active=True)
-        serializer = SerializeSimpleProfile(query, many=True)
+        query = self.get_queryset()
+        serializer = self.get_serializer(query, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def post(self, request):
+    def create(self, request, *args, **kwargs):
         """
             Função que retorna o perfil detalhado de um usuario especifico
         """
@@ -32,17 +35,23 @@ class ProfilesClassView(GenericAPIView):
             return Response({"error": "Perfil não encontrado"}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class YourProfileClassView(mixins.RetrieveModelMixin, mixins.CreateModelMixin, GenericAPIView):
+class YourProfileClassView(ModelViewSet):
     IsAuthenticated = True
+    serializer_class = SerializeProfile
+    queryset = []
 
-    def get(self, request):
+    def list(self, request, *args, **kwargs):
+        """
+            Retorna o perfil do usuario, e não uma lista
+            O list() foi usado por ser equivalente a um get no endpoint
+        """
         profile = request.user.profile
-        serializer = SerializeProfile(profile)
+        serializer = self.get_serializer(profile)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def post(self, request):
+    def create(self, request, *args, **kwargs):
         """
-            Função que retorna o perfil detalhado de um usuario especifico
+            Cria ou atualiza o perfil do usuario
         """
         try:
 
@@ -84,15 +93,12 @@ class YourProfileClassView(mixins.RetrieveModelMixin, mixins.CreateModelMixin, G
 
 
 # Favorites
-class FavoriteClassView(GenericAPIView):
+class FavoriteClassView(ModelViewSet):
     IsAuthenticated = True
+    serializer_class = SerializeSimpleProfile
+    queryset = []
 
-    def get(self, request):
-        favorites = request.user.favorites.all()
-        serializer = SerializeSimpleProfile(favorites)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-    def post(self, request):
+    def create(self, request, *args, **kwargs):
         """
             Adicona ou remove um professinal aos favoritos do usuario
         """

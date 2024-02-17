@@ -14,8 +14,8 @@ export default function AppBar() {
   ]
 
   const categories = () => {
-    return areas.map((data) => (
-      <span className='categories' onClick={() =>selectCategorie(data.name)}> {data.icon} {data.name} </span>
+    return areas.map((data, index) => (
+      <span className='categories' key={index} onClick={() =>selectCategorie(data.name)}> {data.icon} {data.name} </span>
     ))
   }
 
@@ -24,7 +24,7 @@ export default function AppBar() {
     const cards = document.querySelectorAll(".card-margin");
 
     cards.forEach(item => {
-      const profession = item.querySelector(".card-area").innerHTML.toLowerCase()
+      const profession = item.querySelector(".card-title").innerHTML.toLowerCase()
       item.style.display = profession.includes(value)? 'block' : 'none'
     });
   }
@@ -57,7 +57,7 @@ export default function AppBar() {
   return(
     <nav className="app-bar">
       <div className="app-bar-align">
-        <input type="text" className="app-filter" onChange={filterCards} placeholder="Buscar por area"></input>
+        <input type="text" className="app-filter" onChange={filterCards} placeholder="Buscar por profissão"></input>
         <div className="align-categories">
           <span className="categories" onClick={showFavorites}> <FontAwesomeIcon icon={faStar}/> Favoritos </span>
           {categories()}

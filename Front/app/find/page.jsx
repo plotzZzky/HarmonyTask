@@ -21,7 +21,7 @@ export default function Find() {
   // Busca as informações dos cards no back
   function getAllCards() {
     checkLogin()
-    const url = "http://127.0.0.1:8000/profiles/";
+    const url = "http://127.0.0.1:8000/profiles/all/";
 
     const data = {
       method: 'GET',

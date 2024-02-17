@@ -1,10 +1,8 @@
-from django.urls import path
+from rest_framework import routers
 
 from . import views
 
-
-urlpatterns = [
-    path('', views.ProfilesClassView.as_view()),
-    path('your/', views.YourProfileClassView.as_view()),
-    path('favorite/', views.FavoriteClassView.as_view()),
-]
+profiles_router = routers.DefaultRouter()
+profiles_router.register(r'all', views.ProfilesClassView, basename='all')
+profiles_router.register(r'your', views.YourProfileClassView, basename='your')
+profiles_router.register(r'favorites', views.FavoriteClassView, basename='favorite')
