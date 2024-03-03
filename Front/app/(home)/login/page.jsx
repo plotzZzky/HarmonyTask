@@ -6,11 +6,11 @@ import InputEmail from '@comps/inputs/inputEmail';
 import InputUser from '@comps/inputs/inputUser';
 import InputAnswer from '@comps/inputs/inputAnswer';
 import InputQuestion from '@comps/inputs/inputQuestion';
-
+import { useAuth } from '@comps/authContext'
 
 export default function Login() {
   const [getLogin, setLogin] = useState(true);
-  const [getToken, setToken] = useState(typeof window !== 'undefined' ? sessionStorage.getItem('token') : null);
+  const [token, updateToken] = useAuth();
   const router = useRouter();
 
   const [getUsername, setUsername] = useState("");
@@ -29,7 +29,7 @@ export default function Login() {
   const [AnswerValid, setAnswerValid] = useState(false)
 
   function checkLogin() {
-    if (getToken !== null && typeof getToken === 'string') {
+    if (token !== null && typeof token === 'string') {
       router.push("/find");
     }
   }
@@ -74,7 +74,7 @@ export default function Login() {
       .then((res) => res.json())
       .then((data) => {
         if (data.token) {
-          sessionStorage.setItem("token", data.token)
+          updateToken(data.token)
           router.push('/find')
         } else {
           const tip = document.getElementById("LoginTip")

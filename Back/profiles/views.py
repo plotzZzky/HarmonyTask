@@ -68,24 +68,21 @@ class YourProfileClassView(ModelViewSet):
 
             # Tenta obter o perfil existente ou cria um novo se não existir
             profile, created = Profile.objects.get_or_create(user=user)
-            if not created:
-                # Se o perfil já existir, atualiza os dados
-                profile.name = name
-                profile.lastname = lastname
-                profile.area = area
-                profile.profession = profession
-                profile.email = email
-                profile.telephone = telephone
-                profile.description = description
-                profile.active = bool(active)
-                if picture:
-                    os.remove(f"media/{profile.picture}")
-                    profile.picture = picture
-            else:
-                profile = Profile.objects.create(
-                    user=user, name=name, lastname=lastname, area=area, profession=profession, email=email,
-                    telephone=telephone, description=description, picture=picture, active=True
-                )
+            profile.name = name
+            profile.lastname = lastname
+            profile.area = area
+            profile.profession = profession
+            profile.email = email
+            profile.telephone = telephone
+            profile.description = description
+            profile.active = bool(active)
+
+            if picture and profile.picture:
+                file_path = f"media/{profile.picture}"
+                print(file_path)
+                if os.path.exists(file_path):
+                    os.remove(file_path)
+                profile.picture = picture
             profile.save()
             return Response({"msg": "Perfil criado"}, status=200)
         except (KeyError, ValueError):

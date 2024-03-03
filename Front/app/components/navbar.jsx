@@ -3,12 +3,11 @@ import { useState } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUser, faBars, faHome, faQuestion, faUsers, faRightFromBracket, faCartShopping, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons'
+import { useAuth } from './authContext'
 import './navbar.css'
 
-
 export default function NavBar() {
-  const [getToken, setToken] = useState(typeof window !== 'undefined'? sessionStorage.getItem('token') : null);
-
+  const [getToken, setToken] = useAuth();
   const router = useRouter();
   const getPath = usePathname();
 

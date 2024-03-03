@@ -50,7 +50,7 @@ export default function ModalProfile(props) {
   function receiveModalData() {
     const url = 'http://127.0.0.1:8000/profiles/your/';
   
-    let data = {
+    const data = {
       method: 'GET',
       headers: { Authorization: 'Token ' + getToken },
     };
