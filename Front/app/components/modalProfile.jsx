@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faUtensils, faWrench, faScaleBalanced, faCross, faLaptop, faUser } from "@fortawesome/free-solid-svg-icons"
+import { useAuth } from '@comps/authContext'
 
 export default function ModalProfile(props) {
-  const [getToken, setToken] = useState(typeof window !== 'undefined' ? sessionStorage.getItem('token') : null);
+  const [token, updateToken] = useAuth();
 
   const [getName, setName] = useState("");
   const [getLastName, setLastName] = useState("");
@@ -48,27 +49,23 @@ export default function ModalProfile(props) {
 
   // Recebe os dados do perfil profissional do back
   function receiveModalData() {
-    const url = 'http://127.0.0.1:8000/profiles/your/';
+    const url = 'http://127.0.0.1:8000/profiles/all/';
+    const form = new FormData()
   
     const data = {
-      method: 'GET',
-      headers: { Authorization: 'Token ' + getToken },
+      method: 'POST',
+      headers: { Authorization: 'Token ' + token },
+      body: form
     };
   
     fetch(url, data)
       .then((res) => {
         if (res.status === 200) {
           return res.json();
-        } else {
-          throw new Error(`Erro na solicitação com status ${res.status}`);
-        }
-      })
+        }})
       .then((data) => {
         fillOutForm(data);
       })
-      .catch((error) => {
-        console.error(error.message);
-      });
   }
   
   // Preenche os useStates e o forms
@@ -85,6 +82,7 @@ export default function ModalProfile(props) {
     }
   }
 
+  // Valida o formulario para atualizar o perfil
   function validateForm() {
     if (getImageUser, getFileUser, getName, getLastName, getTelephone, getArea, getProfession, getDesc) {
       createProfile()
@@ -112,7 +110,7 @@ export default function ModalProfile(props) {
     const formData = {
       method: 'POST',
       headers: {
-        Authorization: 'Token ' + getToken,
+        Authorization: 'Token ' + token,
       },
       body: form,
     };
@@ -121,12 +119,8 @@ export default function ModalProfile(props) {
       .then((res) => res.json())
       .then((data) => {
         fillOutForm(data);
+        props.update()
       })
-      .catch((error) => {
-        console.error('Erro ao enviar formulário:', error);
-      });
-
-    props.update()
     closeModal();
   }
 
@@ -197,7 +191,7 @@ export default function ModalProfile(props) {
             <option value={false}> Perfile Inativo </option>
           </select>
 
-          <button className="modal-btn" onClick={validateForm}> Salvar </button>
+          <button className="save-btn" onClick={validateForm}> Salvar </button>
         </div>
       </div>
     </div>

@@ -1,9 +1,9 @@
 import { faStar } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useState } from "react";
+import { useAuth } from '@comps/authContext'
 
 export default function Card(props) {
-  const [getToken, setToken] = useState(typeof window !== 'undefined' ? sessionStorage.getItem('token') : null);
+  const [token, updateToken] = useAuth();
 
   function showModal() {
     const modal = document.getElementById('modalView')
@@ -17,7 +17,7 @@ export default function Card(props) {
 
     const data = {
       method: 'POST',
-      headers: { Authorization: 'Token ' + getToken },
+      headers: { Authorization: 'Token ' + token },
       body: form
     }
 
@@ -39,7 +39,7 @@ export default function Card(props) {
 
     const data = {
       method: 'POST',
-      headers: { Authorization: 'Token ' + getToken },
+      headers: { Authorization: 'Token ' + token },
       body: form
     }
 

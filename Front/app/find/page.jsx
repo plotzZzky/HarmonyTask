@@ -4,16 +4,17 @@ import { useRouter } from "next/navigation";
 import Card from "@comps/card";
 import ModalView from "@comps/modalView";
 import ModalProfile from "@comps/modalProfile";
+import { useAuth } from '@comps/authContext'
 
 export default function Find() {
-  const [getToken, setToken] = useState(typeof window !== 'undefined' ? sessionStorage.getItem('token') : null);
+  const [token, updateToken] = useAuth();
   const [getCards, setCards] = useState([]);
   const [getModalData, setModalData] = useState([]);
 
   const router = useRouter();
 
   function checkLogin() {
-    if (getToken === null && typeof getToken !== 'string') {
+    if (token === null && typeof token !== 'string') {
       router.push("/login/");
     }
   }
@@ -25,7 +26,7 @@ export default function Find() {
 
     const data = {
       method: 'GET',
-      headers: { Authorization: 'Token ' + getToken },
+      headers: { Authorization: 'Token ' + token },
     };
 
     fetch(url, data)

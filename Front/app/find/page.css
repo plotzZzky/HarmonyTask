@@ -120,12 +120,12 @@
   position: fixed;
   inset: 0;
   z-index: 999;
-  background-color: #000000e7;
+  background-color: #000000f5;
 }
 
 .modal {
   width: 100%;
-  max-width: 600px;
+  max-width: 700px;
   margin: 1% auto auto;
   padding: 1vh 0.5vw;
   min-height: 40vh;
@@ -165,8 +165,13 @@
 }
 
 .modal-btn {
-  padding: 1vh 1vw;
-  font-size: clamp(0.8em, 1.5vw, 1em);
+  padding: 1.5vh 1.5vw;
+  font-size: clamp(0.9em, 1.5vw, 1em);
+}
+
+.save-btn {
+  padding: 1.2vh 2vw;
+  font-size: clamp(0.9em, 2vw, 1.2em);
 }
 
 .modal-btn * {
@@ -195,7 +200,8 @@
   height: 240px;
   margin: 0 auto;
   cursor: pointer;
-  border: 1px solid grey;
+  border: 1px solid lightgrey;
+  border-radius: 50%;
 }
 
 select, 

@@ -2,6 +2,7 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.generics import get_object_or_404
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 from django.core.exceptions import ObjectDoesNotExist
 import os
 
@@ -10,7 +11,7 @@ from .serializers import SerializeSimpleProfile, SerializeProfile
 
 
 class ProfilesClassView(ModelViewSet):
-    IsAuthenticated = True
+    permission_classes = [IsAuthenticated]
     serializer_class = SerializeSimpleProfile
     queryset = Profile.objects.filter(active=True)
 
@@ -25,29 +26,29 @@ class ProfilesClassView(ModelViewSet):
     def create(self, request, *args, **kwargs):
         """
             Função que retorna o perfil detalhado de um usuario especifico
+            !!! post foi usado para permitir passar o id via form !!!
+
+            Parameters:
+                - id: id do perfil, se o valor for None retorna o perfil do usuario
         """
         try:
-            profile_id = request.data.get("profileId")
-            query = get_object_or_404(Profile, pk=profile_id, active=True)
+            your_id = request.user.profile.id or None
+            profile_id = request.data.get("profileId", your_id)
+            query = get_object_or_404(Profile, pk=profile_id, active=True)  # se não encontrado retorna 404
             serializer = SerializeProfile(query)
             return Response(serializer.data, status=status.HTTP_200_OK)
-        except KeyError:
+        except (KeyError, ValueError, TypeError):
             return Response({"error": "Perfil não encontrado"}, status=status.HTTP_400_BAD_REQUEST)
+
+    def destroy(self, request, *args, **kwargs):
+        """ Impede que delete o perfil """
+        pass
 
 
 class YourProfileClassView(ModelViewSet):
-    IsAuthenticated = True
+    permission_classes = [IsAuthenticated]
     serializer_class = SerializeProfile
     queryset = []
-
-    def list(self, request, *args, **kwargs):
-        """
-            Retorna o perfil do usuario, e não uma lista
-            O list() foi usado por ser equivalente a um get no endpoint
-        """
-        profile = request.user.profile
-        serializer = self.get_serializer(profile)
-        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def create(self, request, *args, **kwargs):
         """
@@ -66,7 +67,6 @@ class YourProfileClassView(ModelViewSet):
             description = request.data['description']
             active = request.data['active']
 
-            # Tenta obter o perfil existente ou cria um novo se não existir
             profile, created = Profile.objects.get_or_create(user=user)
             profile.name = name
             profile.lastname = lastname
@@ -75,23 +75,27 @@ class YourProfileClassView(ModelViewSet):
             profile.email = email
             profile.telephone = telephone
             profile.description = description
-            profile.active = bool(active)
+            profile.active = str(active).title()
 
             if picture and profile.picture:
                 file_path = f"media/{profile.picture}"
-                print(file_path)
                 if os.path.exists(file_path):
                     os.remove(file_path)
                 profile.picture = picture
             profile.save()
-            return Response({"msg": "Perfil criado"}, status=200)
-        except (KeyError, ValueError):
+            serializer = self.get_serializer(profile, many=False)
+            return Response(serializer.data, status=200)
+        except (KeyError, ValueError, TypeError):
             return Response({"error": "Não foi possivel localizar o perfil"}, status=500)
+
+    def destroy(self, request, *args, **kwargs):
+        """ Impede que o perfil seja deletado """
+        pass
 
 
 # Favorites
 class FavoriteClassView(ModelViewSet):
-    IsAuthenticated = True
+    permission_classes = [IsAuthenticated]
     serializer_class = SerializeSimpleProfile
     queryset = []
 
@@ -111,4 +115,8 @@ class FavoriteClassView(ModelViewSet):
                 favorite.delete()
                 return Response({"msg": f"{professional_name} removido dos favoritos"}, status=200)
         except (KeyError, ValueError, ObjectDoesNotExist):
-            return Response({"error": "Não foi possivel adicionar aos favoritos"}, status=500)
+            return Response({"error": "Não foi possivel adicionar aos favoritos"}, status=400)
+
+    def destroy(self, request, *args, **kwargs):
+        """ Impede que delete o favorito """
+        pass
