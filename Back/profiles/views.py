@@ -11,6 +11,7 @@ from .serializers import SerializeSimpleProfile, SerializeProfile
 
 
 class ProfilesClassView(ModelViewSet):
+    http_method_names = ['get', 'post']
     permission_classes = [IsAuthenticated]
     serializer_class = SerializeSimpleProfile
     queryset = Profile.objects.filter(active=True)
@@ -40,12 +41,9 @@ class ProfilesClassView(ModelViewSet):
         except (KeyError, ValueError, TypeError):
             return Response({"error": "Perfil não encontrado"}, status=status.HTTP_400_BAD_REQUEST)
 
-    def destroy(self, request, *args, **kwargs):
-        """ Impede que delete o perfil """
-        pass
-
 
 class YourProfileClassView(ModelViewSet):
+    http_method_names = ['get', 'post']
     permission_classes = [IsAuthenticated]
     serializer_class = SerializeProfile
     queryset = []
@@ -88,13 +86,10 @@ class YourProfileClassView(ModelViewSet):
         except (KeyError, ValueError, TypeError):
             return Response({"error": "Não foi possivel localizar o perfil"}, status=500)
 
-    def destroy(self, request, *args, **kwargs):
-        """ Impede que o perfil seja deletado """
-        pass
-
 
 # Favorites
 class FavoriteClassView(ModelViewSet):
+    http_method_names = ['post']
     permission_classes = [IsAuthenticated]
     serializer_class = SerializeSimpleProfile
     queryset = []
@@ -116,7 +111,3 @@ class FavoriteClassView(ModelViewSet):
                 return Response({"msg": f"{professional_name} removido dos favoritos"}, status=200)
         except (KeyError, ValueError, ObjectDoesNotExist):
             return Response({"error": "Não foi possivel adicionar aos favoritos"}, status=400)
-
-    def destroy(self, request, *args, **kwargs):
-        """ Impede que delete o favorito """
-        pass

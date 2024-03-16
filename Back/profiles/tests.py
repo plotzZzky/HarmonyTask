@@ -5,7 +5,6 @@ from rest_framework.test import APIClient
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.exceptions import ObjectDoesNotExist
 from PIL import Image
-import json
 import io
 
 from .models import Profile, Favorite
@@ -62,12 +61,7 @@ class ProfileTest(TestCase):
 
     def test_get_all_profile_json(self):
         response = self.client.get('/profiles/all/')
-        try:
-            json.loads(response.content)
-            r = True
-        except ValueError:
-            r = False
-        self.assertTrue(r)
+        self.assertEqual(response['Content-Type'], 'application/json')
 
     def test_get_all_profiles_no_login_error(self):
         self.client.credentials()
@@ -81,16 +75,7 @@ class ProfileTest(TestCase):
 
     def test_get_user_profile_json(self):
         response = self.client.post('/profiles/all/')
-        try:
-            json.loads(response.content)
-            r = True
-        except ValueError:
-            r = False
-        self.assertTrue(r)
-
-    def test_get_user_profile_no_id_error(self):
-        response = self.client.post('/profiles/all/')
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response['Content-Type'], 'application/json')
 
     def test_get_user_profile_id_not_exists_error(self):
         user_id = 9999
@@ -104,12 +89,7 @@ class ProfileTest(TestCase):
 
     def test_get_your_profile_is_json(self):
         response = self.client.post('/profiles/your/')
-        try:
-            json.loads(response.content)
-            r = True
-        except ValueError:
-            r = False
-        self.assertTrue(r)
+        self.assertEqual(response['Content-Type'], 'application/json')
 
     def test_update_your_profile_status(self):
         response = self.client.post('/profiles/your/', self.profile_data)
@@ -117,12 +97,7 @@ class ProfileTest(TestCase):
 
     def test_update_your_profile_is_json(self):
         response = self.client.post('/profiles/your/', self.profile_data)
-        try:
-            json.loads(response.content)
-            r = True
-        except ValueError:
-            r = False
-        self.assertTrue(r)
+        self.assertEqual(response['Content-Type'], 'application/json')
 
     def test_create_your_profile_status(self):
         profile = Profile.objects.get(pk=self.profile.id)

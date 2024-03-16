@@ -15,6 +15,7 @@ from .serializer import SerializerUser, SerializerRecovery
 
 
 class RegisterView(ModelViewSet):
+    http_method_names = ['post']
     serializer_class = SerializerUser
     queryset = []
 
@@ -53,6 +54,7 @@ class LoginView(ModelViewSet):
     """
         View de login
     """
+    http_method_names = ['post']
     serializer_class = SerializerUser
     queryset = []
 
@@ -72,9 +74,9 @@ class LoginView(ModelViewSet):
 
 
 class RecoveryPassword(ModelViewSet):
+    http_method_names = ['post']
     queryset = []
     serializer_class = SerializerRecovery
-    IsAuthenticated = True
 
     def create(self, request, *args, **kwargs):
         try:
@@ -99,6 +101,7 @@ class RecoveryPassword(ModelViewSet):
 
 # Envia a question do usuario para o front para fazer a recuperação de senha
 class ReceiverYourQuestion(ModelViewSet):
+    http_method_names = ['post']
     serializer_class = SerializerUser
     queryset = []
 
