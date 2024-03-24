@@ -11,12 +11,12 @@ from django.db.utils import IntegrityError
 from .validate import validate_user, validate_password
 from .token import create_new_token
 from .models import Recovery
-from .serializer import SerializerUser, SerializerRecovery
+from .serializer import UserSerializer
 
 
 class RegisterView(ModelViewSet):
     http_method_names = ['post']
-    serializer_class = SerializerUser
+    serializer_class = UserSerializer
     queryset = []
 
     def create(self, request, *args, **kwargs):
@@ -55,7 +55,7 @@ class LoginView(ModelViewSet):
         View de login
     """
     http_method_names = ['post']
-    serializer_class = SerializerUser
+    serializer_class = UserSerializer
     queryset = []
 
     def create(self, request, *args, **kwargs):
@@ -76,7 +76,7 @@ class LoginView(ModelViewSet):
 class RecoveryPassword(ModelViewSet):
     http_method_names = ['post']
     queryset = []
-    serializer_class = SerializerRecovery
+    serializer_class = UserSerializer
 
     def create(self, request, *args, **kwargs):
         try:
@@ -102,7 +102,7 @@ class RecoveryPassword(ModelViewSet):
 # Envia a question do usuario para o front para fazer a recuperação de senha
 class ReceiverYourQuestion(ModelViewSet):
     http_method_names = ['post']
-    serializer_class = SerializerUser
+    serializer_class = UserSerializer
     queryset = []
 
     def create(self, request, *args, **kwargs):

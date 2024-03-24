@@ -1,15 +1,19 @@
-from rest_framework.serializers import ModelSerializer
+from rest_framework.serializers import ModelSerializer, SerializerMethodField
 from django.contrib.auth.models import User
-from .models import Recovery
 
 
-class SerializerUser(ModelSerializer):
+class UserSerializer(ModelSerializer):
+    question = SerializerMethodField()
+    answer = SerializerMethodField()
+
     class Meta:
         model = User
-        fields = ['username', 'email']
+        fields = ['username', 'email', 'question', 'answer']
 
+    @staticmethod
+    def get_question(obj):
+        return obj.recovery.question
 
-class SerializerRecovery(ModelSerializer):
-    class Meta:
-        model = Recovery
-        fields = '__all__'
+    @staticmethod
+    def get_answer(obj):
+        return obj.recovery.answer

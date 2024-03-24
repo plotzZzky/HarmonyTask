@@ -10,7 +10,8 @@ class SerializeSimpleProfile(ModelSerializer):
 
     favorite = SerializerMethodField()
 
-    def get_favorite(self, obj):
+    @staticmethod
+    def get_favorite(obj):
         try:
             Favorite.objects.get(professional=obj)
             result = True
@@ -24,6 +25,7 @@ class SerializeSimpleProfile(ModelSerializer):
 
 
 class SerializeProfile(ModelSerializer):
+    """ Serializa o perfil completo do usuario """
     class Meta:
         model = Profile
         fields = '__all__'
